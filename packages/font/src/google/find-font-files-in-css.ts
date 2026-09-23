@@ -8,6 +8,7 @@ export function findFontFilesInCss(css: string, subsetsToPreload?: string[]) {
   const fontFiles: Array<{
     googleFontFileUrl: string
     preloadFontFile: boolean
+    format?: string
   }> = []
 
   // Keep track of the current subset
@@ -19,6 +20,7 @@ export function findFontFilesInCss(css: string, subsetsToPreload?: string[]) {
       currentSubset = newSubset
     } else {
       const googleFontFileUrl = /src: url\((.+?)\)/.exec(line)?.[1]
+      const formatMatch = /format\(['"]?([a-zA-Z0-9]+)['"]?\)/.exec(line)?.[1]
       if (
         googleFontFileUrl &&
         !fontFiles.some(
@@ -29,6 +31,7 @@ export function findFontFilesInCss(css: string, subsetsToPreload?: string[]) {
         fontFiles.push({
           googleFontFileUrl,
           preloadFontFile: !!subsetsToPreload?.includes(currentSubset),
+          format: formatMatch,
         })
       }
     }
